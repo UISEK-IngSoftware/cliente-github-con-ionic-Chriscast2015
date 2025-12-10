@@ -4,4 +4,5 @@ export interface RepositoryItem {
   imageUrl: string | null;
   owner: string | null;
   language: string | null;
+  
 }

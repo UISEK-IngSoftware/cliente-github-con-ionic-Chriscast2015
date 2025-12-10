@@ -25,6 +25,7 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
             language: repo.language ? repo.language : null,
         }));
 
+        
         return repositories;
 
     } catch (error) {
