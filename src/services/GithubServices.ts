@@ -1,8 +1,9 @@
 import axios from "axios";
 import { RepositoryItem } from "../interfaces/RepositoryItem";
+import { UserInfo } from "../interfaces/UserInfo";
 
-const GITHUB_API_URL = "https://api.github.com";
-const GITHUB_API_TOKEN = "ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"; // Reemplaza con tu token de acceso personal de GitHub
+const GITHUB_API_URL = import.meta.env.VITE_API_URL;
+const GITHUB_API_TOKEN = import.meta.env.VITE_GITHUB_API_TOKEN;
 
 export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
     try {
@@ -14,8 +15,10 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
                 per_page: 100,
                 sort: "created",
                 direction: "desc",
+                affiliation: "owner",
             }
         });
+
 
         const repositories: RepositoryItem[] = response.data.map((repo: any) => ({
             name: repo.name,
@@ -33,3 +36,39 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
         return [];
     }
 }
+
+export const createRepository = async (repo: RepositoryItem): Promise<void> => {
+    try {
+        const response = await axios.post(`${GITHUB_API_URL}/user/repos`, repo, {
+            headers: {
+                Authorization: `Bearer ${GITHUB_API_TOKEN}`,
+            }
+        });
+        console.log("Repositorio ingresado", response.data);
+
+
+    } catch (error) {
+        console.error("Error al crear el repositorio:", error);
+    }
+};
+
+export const getUserInfo = async (): Promise<UserInfo | null> => {
+    try {
+        const response = await axios.get(`${GITHUB_API_URL}/user`, {
+            headers: {
+                Authorization: `Bearer ${GITHUB_API_TOKEN}`,
+            }
+        });
+        return response.data as UserInfo;
+
+    } catch (error) {
+        console.error("Error al obtener la información del usuario:", error);
+        const userNotFound: UserInfo = {
+            login: "undefined",
+            name: "Usuario no encontrado",
+            bio: "No se pudo obtener la información del usuario",
+            avatar_url: "https://static.vecteezy.com/system/resources/previews/038/010/638/non_2x/account-name-not-found-concept-illustration-flat-design-simple-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg",
+        };
+        return userNotFound;
+    }
+};
