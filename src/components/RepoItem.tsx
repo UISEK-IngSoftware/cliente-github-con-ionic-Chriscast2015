@@ -1,23 +1,48 @@
-import {IonItem, IonLabel, IonThumbnail} from '@ionic/react'
-import './RepoItem.css';
+import {
+  IonItem,
+  IonLabel,
+  IonAvatar,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption
+} from '@ionic/react';
+
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 
-const RepoItem: React.FC<{ repo: RepositoryItem }> = ({ repo }) => {
-  return ( 
-    <IonItem>
-      <IonThumbnail slot="start"> 
-        <img src={repo.imageUrl || "https://ionicframework.com/docs/demos/api/list/avatar-finn.png"} alt={repo.name} />
-        </IonThumbnail>
-      <IonLabel>
-        <h2> {repo.name} </h2>
-        <p> {repo.description} </p>
-        <p> Propietario: {repo.owner} </p>
-        <p> Lenguaje {repo.language} </p>
-      </IonLabel>
-    </IonItem>
-    
+interface RepoItemProps {
+  repo: RepositoryItem;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+const RepoItem: React.FC<RepoItemProps> = ({ repo, onEdit, onDelete }) => {
+  return (
+    <IonItemSliding>
+      <IonItem>
+        <IonAvatar slot="start">
+          <img
+            src={repo.imageUrl || 'https://ionicframework.com/docs/demos/api/list/avatar-finn.png'}
+            alt="avatar"
+          />
+        </IonAvatar>
+
+        <IonLabel>
+          <h2>{repo.name}</h2>
+          <p>Propietario: {repo.owner}</p>
+          <p>Lenguaje: {repo.language}</p>
+        </IonLabel>
+      </IonItem>
+
+      <IonItemOptions side="end">
+        <IonItemOption color="warning" onClick={onEdit}>
+          EDITAR
+        </IonItemOption>
+        <IonItemOption color="danger" onClick={onDelete}>
+          ELIMINAR
+        </IonItemOption>
+      </IonItemOptions>
+    </IonItemSliding>
   );
 };
-
 
 export default RepoItem;

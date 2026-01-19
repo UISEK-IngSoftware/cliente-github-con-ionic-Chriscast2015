@@ -74,3 +74,33 @@ export const getUserInfo = async (): Promise<UserInfo | null> => {
         return userNotFound;
     }
 };
+
+export const updateRepositoryPUT = async (
+  owner: string,
+  repoName: string,
+  data: {
+    name: string;
+    description?: string | null;
+    private?: boolean;
+  }
+): Promise<void> => {
+  try {
+    await githubApi.patch(`/repos/${owner}/${repoName}`, data);
+    console.log("Repositorio actualizado correctamente (PUT académico)");
+  } catch (error) {
+    console.error("Error al actualizar el repositorio:", error);
+  }
+};
+
+
+export const deleteRepository = async (
+    owner: string,
+    repoName: string
+): Promise<void> => {
+    try {
+        await githubApi.delete(`/repos/${owner}/${repoName}`);
+        console.log("Repositorio eliminado correctamente");
+    } catch (error) {
+        console.error("Error al eliminar el repositorio:", error);
+    }
+};
