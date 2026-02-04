@@ -4,9 +4,11 @@ import './Tab2.css';
 import { useHistory } from 'react-router';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { createRepository } from '../services/GithubServices';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useState } from 'react';
 
 const Tab2: React.FC = () => {
-
+  const [loading, setLoading] = useState(false); 
    const history = useHistory();
 
   const repoFormData : RepositoryItem = {
@@ -31,10 +33,15 @@ const Tab2: React.FC = () => {
       return;
     }
 
+    setLoading(true);
+
     createRepository(repoFormData)
     .then(() => { history.push('/tab1'); })
     .catch(() => {
       alert('error al crear el repositorio.');
+
+    }).finally(() => {
+      setLoading(false);
     });
   };
 
@@ -76,10 +83,16 @@ const Tab2: React.FC = () => {
             Guardar
           </IonButton>
         </div>
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
+      
     </IonPage>
   );
 };
 
 
 export default Tab2;
+
+function setLoading(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}

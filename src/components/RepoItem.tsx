@@ -17,7 +17,7 @@ interface RepoItemProps {
 
 const RepoItem: React.FC<RepoItemProps> = ({ repo, onEdit, onDelete }) => {
   return (
-    <IonItemSliding>
+    <IonItemSliding>{/*deslizable*/}
       <IonItem>
         <IonAvatar slot="start">
           <img
@@ -28,11 +28,12 @@ const RepoItem: React.FC<RepoItemProps> = ({ repo, onEdit, onDelete }) => {
 
         <IonLabel>
           <h2>{repo.name}</h2>
+          
           <p>Propietario: {repo.owner}</p>
           <p>Lenguaje: {repo.language}</p>
         </IonLabel>
       </IonItem>
-
+{/*Nuevos props*/}
       <IonItemOptions side="end">
         <IonItemOption color="warning" onClick={onEdit}>
           EDITAR

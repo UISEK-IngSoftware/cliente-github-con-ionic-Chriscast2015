@@ -6,8 +6,12 @@ import AuthService from "./AuthService";
 const GITHUB_API_URL = import.meta.env.VITE_API_URL;
 
 const githubApi = axios.create({
-    baseURL: GITHUB_API_URL, 
-}); 
+    baseURL: GITHUB_API_URL,
+    /*headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache"
+    }*/
+});
 
 githubApi.interceptors.request.use((config) => { 
     const AuthHeader = AuthService.getAuthHeaders(); 
@@ -20,7 +24,7 @@ githubApi.interceptors.request.use((config) => {
 });     
 
 
-export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
+export const fetchRepositories = async (): Promise<RepositoryItem[]> => { //obtiene repositorios de github
     try {
         const response = await githubApi.get(`/user/repos`,{
         
@@ -29,9 +33,10 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
                 sort: "created",
                 direction: "desc",
                 affiliation: "owner",
+                t: Date.now()
             }
         });
-        const repositories: RepositoryItem[] = response.data.map((repo: any) => ({
+        const repositories: RepositoryItem[] = response.data.map((repo: any) => ({ //transforma datos - mapea
 
             name: repo.name,
             description: repo.description ? repo.description : null,
@@ -48,7 +53,7 @@ export const fetchRepositories = async (): Promise<RepositoryItem[]> => {
     }
 }
 
-export const createRepository = async (repo: RepositoryItem): Promise<void> => {
+export const createRepository = async (repo: RepositoryItem): Promise<void> => { //crea repositorio con datos recibidos
     try {
         const response = await githubApi.post(`/user/repos`, repo);
         
@@ -58,7 +63,7 @@ export const createRepository = async (repo: RepositoryItem): Promise<void> => {
     }
 };
 
-export const getUserInfo = async (): Promise<UserInfo | null> => {
+export const getUserInfo = async (): Promise<UserInfo | null> => { //obtiene info usuario github autenticado
     try {
         const response = await githubApi.get(`/user`,);
         return response.data as UserInfo;
@@ -75,7 +80,9 @@ export const getUserInfo = async (): Promise<UserInfo | null> => {
     }
 };
 
-export const updateRepositoryPUT = async (
+//new
+
+export const updateRepositoryPUT = async ( //actualiza repositorio con metodo PUT 
   owner: string,
   repoName: string,
   data: {
@@ -85,7 +92,7 @@ export const updateRepositoryPUT = async (
   }
 ): Promise<void> => {
   try {
-    await githubApi.patch(`/repos/${owner}/${repoName}`, data);
+    await githubApi.patch(`/repos/${owner}/${repoName}`, data); //axios envia la peticion PATCH
     console.log("Repositorio actualizado correctamente (PUT académico)");
   } catch (error) {
     console.error("Error al actualizar el repositorio:", error);
@@ -93,7 +100,7 @@ export const updateRepositoryPUT = async (
 };
 
 
-export const deleteRepository = async (
+export const deleteRepository = async ( //elimina repositorio
     owner: string,
     repoName: string
 ): Promise<void> => {

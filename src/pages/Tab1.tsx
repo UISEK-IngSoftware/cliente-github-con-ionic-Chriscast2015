@@ -19,28 +19,33 @@ import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { useState } from 'react';
 import {
   fetchRepositories,
-  updateRepositoryPUT,
+  updateRepositoryPUT,//añadido 
   deleteRepository
 } from '../services/GithubServices';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Tab1: React.FC = () => {
+  const [loading, setLoading] = useState(false);
 
   const [repos, setRepos] = useState<RepositoryItem[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);//estados añadidos 
   const [selectedRepo, setSelectedRepo] = useState<RepositoryItem | null>(null);
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState<string | null>('');
 
   const loadRepos = async () => {
+    setLoading(true);
     const reposData = await fetchRepositories();
     setRepos(reposData);
+    setLoading(false);
+    
   };
 
   useIonViewDidEnter(() => {
     loadRepos();
   });
 
-  // 👉 ABRIR MODAL
+  // ABRIR MODAL - VENTANA DE EDICIÓN - EMERGENTE
   const handleEdit = (repo: RepositoryItem) => {
     setSelectedRepo(repo);
     setNewName(repo.name);
@@ -48,7 +53,7 @@ const Tab1: React.FC = () => {
     setShowModal(true);
   };
 
-  // 👉 GUARDAR CAMBIOS (PUT)
+  // GUARDAR CAMBIOS (PATCH)
   const handleSave = async () => {
     if (!selectedRepo) return;
 
@@ -65,7 +70,7 @@ const Tab1: React.FC = () => {
     loadRepos();
   };
 
-  // 👉 ELIMINAR (DELETE)
+  // ELIMINAR (DELETE)
   const handleDelete = async (repo: RepositoryItem) => {
     await deleteRepository(
       repo.owner!,
@@ -84,12 +89,13 @@ const Tab1: React.FC = () => {
 
       <IonContent fullscreen>
         <IonList>
+          <LoadingSpinner isOpen={loading} /> 
           {repos.map((repo, index) => (
             <RepoItem
               key={index}
               repo={repo}
-              onEdit={() => handleEdit(repo)}
-              onDelete={() => handleDelete(repo)}
+              onEdit={() => handleEdit(repo)}//editar
+              onDelete={() => handleDelete(repo)}//eliminar
             />
           ))}
         </IonList>
